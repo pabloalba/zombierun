@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://floor.gd" type="Script" id=1]
+[ext_resource path="res://assets/img/floor0.png" type="Texture" id=2]
+
+[node name="floor" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+texture = ExtResource( 2 )
+centered = false
+
+
