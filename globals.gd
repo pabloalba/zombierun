@@ -1,8 +1,9 @@
 extends Node
 
-const ZOMBIE_SPEED_X = 300
-const ZOMBIE_SPEED_Y = 350
-const WIDTH = 1200
+const ZOMBIE_SPEED_X = 400
+const ZOMBIE_SPEED_Y = 700
+const ZOMBIE_GRAVITY = 1500
+const WIDTH = 1280
 const HEIGHT = 720
 
 

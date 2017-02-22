@@ -1,8 +1,6 @@
 extends Node2D
 
 
-const GRAVITY = 500
-
 const RUNNING = 0
 const JUMPING = 1
 const DEADING = 2
@@ -41,7 +39,7 @@ func jump():
 		jump = true
 
 func attack():
-	if not attacking:
+	if not dead and not attacking:
 		attack = true
 		return true
 	return false
@@ -112,7 +110,7 @@ func process_movement(delta):
 
 	# Fall
 	if vel_y < globals.ZOMBIE_SPEED_Y:
-		vel_y += delta * GRAVITY
+		vel_y += delta * globals.ZOMBIE_GRAVITY
 	else:
 		vel_y = globals.ZOMBIE_SPEED_Y
 

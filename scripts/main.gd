@@ -1,7 +1,10 @@
 extends Container
 
+const TILE_SIZE = 64
 
 var enemy
+var map
+
 
 func _ready():
 	globals.zombie = get_node("zombie1")
@@ -15,27 +18,44 @@ func reset_map():
 		remove_child(e)
 	globals.enemies = []
 
+	for s in globals.spikes:
+		remove_child(s)
+	globals.spikes = []
+
 	for f in globals.floors:
 		remove_child(f)
 	globals.floors = []
 
-	globals.zombie.set_pos(Vector2(500, 200))
+	globals.zombie.set_pos(Vector2(600, 0))
 	globals.zombie.reset()
-	create_floor(500, 430)
-	create_floor(850, 430)
-	create_floor(1300, 530)
-	create_floor(1700, 530)
-	create_floor(2400, 530)
-	create_floor(2800, 530)
-	create_floor(3300, 530)
-	create_floor(3800, 470)
-	create_floor(4400, 420)
+
+	if map:
+		remove_child(map)
+	map = preload("res://level1.tscn").instance()
+	add_child(map)
+
+	load_map(map)
 
 
-	create_enemy(3000, 410)
-	create_enemy(4500, 300)
 
-	create_spike(1700, 485, false)
+
+func load_map(map):
+	print("load map")
+	var tm = map.get_node("TileMap")
+	for tile in tm.get_used_cells():
+		var content = tm.get_cell(tile.x, tile.y)
+		if content == 18:
+			tm.set_cell (tile.x,tile.y, -1)
+			create_enemy(tile.x * TILE_SIZE, tile.y * TILE_SIZE - 64)
+		elif content == 19:
+			tm.set_cell (tile.x,tile.y, -1)
+			create_spike(tile.x * TILE_SIZE, tile.y * TILE_SIZE + 32, false)
+		elif content == 20:
+			tm.set_cell (tile.x,tile.y, -1)
+			create_spike(tile.x * TILE_SIZE + 32, tile.y * TILE_SIZE + TILE_SIZE, true)
+		else:
+			create_floor(tile.x * TILE_SIZE, tile.y * TILE_SIZE)
+
 
 
 
@@ -51,18 +71,10 @@ func _process(delta):
 
 
 func create_floor(x, y):
-	# Search for a free floor
-	var current_floor
-	#for f in floors:
-	#	if not f.is_visible():
-	#		current_floor = f
-	#		break
-	if not current_floor:
-		current_floor = preload("res://floor.tscn").instance()
-		add_child(current_floor)
-		globals.floors.append(current_floor)
-	current_floor.set_pos(Vector2(x, y))
-	current_floor.region.pos = Vector2(x, y)
+	var current_floor = preload("res://virtual_floor.tscn").instance()
+	add_child(current_floor)
+	globals.floors.append(current_floor)
+	current_floor.set_dimension(x, y, 64, 64)
 	return current_floor
 
 

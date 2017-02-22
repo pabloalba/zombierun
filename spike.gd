@@ -1,7 +1,7 @@
 extends Node2D
 
-const WIDTH = 100
-const HEIGHT = 50
+const WIDTH = 64
+const HEIGHT = 32
 
 var vertical = false
 func _ready():
@@ -37,5 +37,4 @@ func collides(r):
 	else:
 		r2 = Rect2(pos.x, pos.y, WIDTH, HEIGHT)
 
-	print (r2)
 	return r.intersects(r2)
