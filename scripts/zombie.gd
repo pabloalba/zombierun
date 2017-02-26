@@ -1,6 +1,5 @@
 extends Node2D
 
-
 const RUNNING = 0
 const JUMPING = 1
 const DEADING = 2
@@ -141,9 +140,16 @@ func zombie_floor_collides():
 	var pos = get_pos()
 	var r = Rect2(pos.x + 25, pos.y + 10, 90, 120)
 
-	for f in globals.floors:
-		if r.intersects(f.region):
-			return true
+	var fx0 = (pos.x / 64) + 1
+	var fy0 = (pos.y / 64) + 1
+
+	for fx in range(fx0, fx0+2):
+		for fy in range (fy0, fy0+2):
+			var content = globals.tile_map.get_cell(fx, fy)
+			if content >=0:
+				var region = Rect2(fx * globals.TILE_SIZE, fy * globals.TILE_SIZE, globals.TILE_SIZE, globals.TILE_SIZE)
+				if r.intersects(region):
+					return true
 	return false
 
 

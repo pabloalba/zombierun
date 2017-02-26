@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=1]
+[gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
-[ext_resource path="res://assets/img/bg.png" type="Texture" id=2]
-[ext_resource path="res://zombie.tscn" type="PackedScene" id=3]
-[ext_resource path="res://assets/img/btn_jump_100.png" type="Texture" id=4]
-[ext_resource path="res://assets/img/btn_attack_100.png" type="Texture" id=5]
+[ext_resource path="res://assets/img/bg1.png" type="Texture" id=2]
+[ext_resource path="res://scroll_parallax.gd" type="Script" id=3]
+[ext_resource path="res://assets/img/bg2.png" type="Texture" id=4]
+[ext_resource path="res://zombie.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/img/btn_jump_100.png" type="Texture" id=6]
+[ext_resource path="res://assets/img/btn_attack_100.png" type="Texture" id=7]
+[ext_resource path="res://assets/img/ending.png" type="Texture" id=8]
 
 [node name="Container" type="Container"]
 
@@ -30,7 +33,40 @@ scale = Vector2( 1, 1 )
 transform/pos = Vector2( 640.477, 362.024 )
 texture = ExtResource( 2 )
 
-[node name="zombie1" parent="." instance=ExtResource( 3 )]
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+layer = -1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+scroll/offset = Vector2( 0, 0 )
+scroll/base_offset = Vector2( 0, 0 )
+scroll/base_scale = Vector2( 1, 1 )
+scroll/limit_begin = Vector2( 0, 0 )
+scroll/limit_end = Vector2( 0, 0 )
+scroll/ignore_camera_zoom = true
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+
+motion/scale = Vector2( 1, 1 )
+motion/offset = Vector2( 0, 0 )
+motion/mirroring = Vector2( 1280, 0 )
+script/script = ExtResource( 3 )
+
+[node name="TextureFrame" type="TextureFrame" parent="ParallaxBackground/ParallaxLayer"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 40.0
+margin/bottom = 40.0
+texture = ExtResource( 4 )
+stretch_mode = 0
+
+[node name="zombie1" parent="." instance=ExtResource( 5 )]
 
 transform/pos = Vector2( 200, 100 )
 
@@ -77,7 +113,7 @@ margin/bottom = 627.0
 
 transform/pos = Vector2( 50, 50 )
 z/z = 10
-texture = ExtResource( 4 )
+texture = ExtResource( 6 )
 
 [node name="btn_attack" type="Control" parent="HUD"]
 
@@ -92,7 +128,13 @@ margin/bottom = 712.0
 
 [node name="Sprite" type="Sprite" parent="HUD/btn_attack"]
 
-texture = ExtResource( 5 )
+texture = ExtResource( 7 )
+centered = false
+
+[node name="ending_veil" type="Sprite" parent="HUD"]
+
+z/z = 10
+texture = ExtResource( 8 )
 centered = false
 
 [connection signal="input_event" from="HUD/btn_jump" to="." method="_on_btn_jump_input_event"]

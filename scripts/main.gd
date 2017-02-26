@@ -1,14 +1,14 @@
 extends Container
 
-const TILE_SIZE = 64
-
 var enemy
+var ending_veil
 var map
 
 
 func _ready():
 	globals.zombie = get_node("zombie1")
 	globals.head = create_head()
+	ending_veil = get_node("HUD/ending_veil")
 	reset_map()
 	set_process(true)
 
@@ -22,45 +22,37 @@ func reset_map():
 		remove_child(s)
 	globals.spikes = []
 
-	for f in globals.floors:
-		remove_child(f)
-	globals.floors = []
-
 	globals.zombie.set_pos(Vector2(600, 0))
 	globals.zombie.reset()
 
 	if map:
 		remove_child(map)
 	map = preload("res://level1.tscn").instance()
+	globals.tile_map = map.get_node("TileMap")
 	add_child(map)
-
-	load_map(map)
-
+	load_map()
 
 
 
-func load_map(map):
+
+func load_map():
 	print("load map")
-	var tm = map.get_node("TileMap")
-	for tile in tm.get_used_cells():
-		var content = tm.get_cell(tile.x, tile.y)
+
+	for tile in globals.tile_map.get_used_cells():
+		var content = globals.tile_map.get_cell(tile.x, tile.y)
 		if content == 18:
-			tm.set_cell (tile.x,tile.y, -1)
-			create_enemy(tile.x * TILE_SIZE, tile.y * TILE_SIZE - 64)
+			globals.tile_map.set_cell (tile.x,tile.y, -1)
+			create_enemy(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE - 64)
 		elif content == 19:
-			tm.set_cell (tile.x,tile.y, -1)
-			create_spike(tile.x * TILE_SIZE, tile.y * TILE_SIZE + 32, false)
+			globals.tile_map.set_cell (tile.x,tile.y, -1)
+			create_spike(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE + 32, false)
 		elif content == 20:
-			tm.set_cell (tile.x,tile.y, -1)
-			create_spike(tile.x * TILE_SIZE + 32, tile.y * TILE_SIZE + TILE_SIZE, true)
-		else:
-			create_floor(tile.x * TILE_SIZE, tile.y * TILE_SIZE)
-
-
-
+			globals.tile_map.set_cell (tile.x,tile.y, -1)
+			create_spike(tile.x * globals.TILE_SIZE + 32, tile.y * globals.TILE_SIZE + globals.TILE_SIZE, true)
 
 func _process(delta):
 	if not check_end():
+		process_fade(delta)
 		process_enemies()
 		process_spikes()
 		globals.head.process(delta)
@@ -68,14 +60,15 @@ func _process(delta):
 	else:
 		reset_map()
 
+func process_fade(delta):
+	var opacity = ending_veil.get_opacity()
+	if globals.zombie.dead:
+		if opacity < 1 and globals.zombie.dead_time > 1:
+			ending_veil.set_opacity(opacity + (delta * 0.5))
+	else:
+		if opacity > 0:
+			ending_veil.set_opacity(opacity - (delta * 0.5))
 
-
-func create_floor(x, y):
-	var current_floor = preload("res://virtual_floor.tscn").instance()
-	add_child(current_floor)
-	globals.floors.append(current_floor)
-	current_floor.set_dimension(x, y, 64, 64)
-	return current_floor
 
 
 func create_enemy(x, y):
@@ -103,7 +96,7 @@ func create_head():
 
 
 func check_end():
-	if globals.zombie.dead_time > 3:
+	if globals.zombie.dead_time > 5:
 		return true
 
 func process_enemies():

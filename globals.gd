@@ -5,12 +5,13 @@ const ZOMBIE_SPEED_Y = 700
 const ZOMBIE_GRAVITY = 1500
 const WIDTH = 1280
 const HEIGHT = 720
+const TILE_SIZE = 64
 
 
-
-var floors = []
 var enemies = []
 var spikes = []
 var zombie
 var head
+var tile_map
+
 
