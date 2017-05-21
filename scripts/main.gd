@@ -15,6 +15,10 @@ func _ready():
 
 
 func reset_map():
+	for b in globals.brains:
+		remove_child(b)
+	globals.brains = []
+	globals.num_brains = 0
 	for e in globals.enemies:
 		remove_child(e)
 	globals.enemies = []
@@ -55,8 +59,12 @@ func load_map():
 		elif content == 21:
 			globals.tile_map.set_cell (tile.x,tile.y, -1)
 			create_end(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE - 25)
+		elif content == 22:
+			globals.tile_map.set_cell (tile.x,tile.y, -1)
+			create_brain(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE)
 
 func _process(delta):
+	proces_brain_num()
 	process_end_sign(delta)
 	if win():
 		get_node("StreamPlayer").stop()
@@ -73,11 +81,15 @@ func _process(delta):
 			process_fade(delta)
 			process_enemies()
 			process_spikes()
+			process_brains()
 			globals.head.process(delta)
 			globals.zombie.process(delta)
 		else:
 			get_node("StreamPlayer").stop()
 			reset_map()
+
+func proces_brain_num():
+	get_node("HUD/brains/NumBrains").set_text(str(globals.num_brains))
 
 func process_fade(delta):
 	var opacity = ending_veil.get_opacity()
@@ -114,6 +126,13 @@ func create_end(x, y):
 	e.reset()
 	return e
 
+func create_brain(x, y):
+	var b = preload("res://brain.tscn").instance()
+	add_child(b)
+	globals.brains.append(b)
+	b.set_pos(Vector2(x, y))
+	return b
+
 func create_head():
 	var head = preload("res://head.tscn").instance()
 	add_child(head)
@@ -137,6 +156,10 @@ func process_enemies():
 func process_spikes():
 	for spike in globals.spikes:
 		spike.process()
+
+func process_brains():
+	for brain in globals.brains:
+		brain.process()
 
 func process_end_sign(delta):
 	globals.end_sign.process(delta)

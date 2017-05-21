@@ -10,9 +10,12 @@ const TILE_SIZE = 64
 
 var enemies = []
 var spikes = []
+var brains = []
 var zombie
 var head
 var tile_map
 var end_sign
+var num_brains = 0
+
 
 
