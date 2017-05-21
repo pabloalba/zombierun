@@ -36,10 +36,12 @@ func reset():
 func jump():
 	if current_action == RUNNING:
 		jump = true
+		get_node("SamplePlayer2D").play("jump")
 
 func attack():
 	if not dead and not attacking:
 		attack = true
+		get_node("SamplePlayer2D").play("grunt")
 		return true
 	return false
 
@@ -50,6 +52,8 @@ func fall():
 	current_action = FALLING
 
 func die(bounce=true):
+	if !dead:
+		get_node("SamplePlayer2D").play("ouch")
 	get_node("anim").play("dead")
 	if bounce:
 		vel_x = - globals.ZOMBIE_SPEED_X

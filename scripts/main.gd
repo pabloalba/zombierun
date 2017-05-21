@@ -13,6 +13,7 @@ func _ready():
 	set_process(true)
 
 
+
 func reset_map():
 	for e in globals.enemies:
 		remove_child(e)
@@ -31,6 +32,8 @@ func reset_map():
 	globals.tile_map = map.get_node("TileMap")
 	add_child(map)
 	load_map()
+	get_node("StreamPlayer").seek_pos(0)
+	get_node("StreamPlayer").play()
 
 
 
@@ -56,6 +59,7 @@ func load_map():
 func _process(delta):
 	process_end_sign(delta)
 	if win():
+		get_node("StreamPlayer").stop()
 		globals.zombie.vel_x = 0
 		globals.zombie.get_node("anim").stop()
 		globals.head.process(delta)
@@ -63,6 +67,8 @@ func _process(delta):
 		if check_win_time():
 			reset_map()
 	else:
+		if globals.zombie.dead:
+			get_node("StreamPlayer").stop()
 		if not check_end():
 			process_fade(delta)
 			process_enemies()
@@ -70,6 +76,7 @@ func _process(delta):
 			globals.head.process(delta)
 			globals.zombie.process(delta)
 		else:
+			get_node("StreamPlayer").stop()
 			reset_map()
 
 func process_fade(delta):
@@ -120,7 +127,7 @@ func check_end():
 		return true
 
 func check_win_time():
-	return globals.end_sign.win_time > 5
+	return globals.end_sign.win_time > 4
 
 
 func process_enemies():

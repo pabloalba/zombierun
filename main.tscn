@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=1]
+[gd_scene load_steps=10 format=1]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://assets/img/bg1.png" type="Texture" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://assets/img/btn_jump_100.png" type="Texture" id=6]
 [ext_resource path="res://assets/img/btn_attack_100.png" type="Texture" id=7]
 [ext_resource path="res://assets/img/ending.png" type="Texture" id=8]
+[ext_resource path="res://music/Galway.ogg" type="AudioStream" id=9]
 
 [node name="Container" type="Container"]
 
@@ -136,6 +137,17 @@ centered = false
 z/z = 10
 texture = ExtResource( 8 )
 centered = false
+
+[node name="StreamPlayer" type="StreamPlayer" parent="."]
+
+stream/stream = ExtResource( 9 )
+stream/play = false
+stream/loop = true
+stream/volume_db = 0.0
+stream/autoplay = false
+stream/paused = false
+stream/loop_restart_time = 0.0
+stream/buffering_ms = 500
 
 [connection signal="input_event" from="HUD/btn_jump" to="." method="_on_btn_jump_input_event"]
 
