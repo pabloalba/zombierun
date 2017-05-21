@@ -13,5 +13,6 @@ var spikes = []
 var zombie
 var head
 var tile_map
+var end_sign
 
 
