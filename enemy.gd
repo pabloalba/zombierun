@@ -42,7 +42,7 @@ func zombie_collides():
 		var pos = globals.zombie.get_pos()
 		var r = Rect2(pos.x + 25, pos.y + 10, 90, 120)
 		if collides(r):
-			globals.zombie.die()
+			globals.zombie.die("SLICED!")
 
 func head_collides():
 	if not dead:

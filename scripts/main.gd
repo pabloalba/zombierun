@@ -3,6 +3,7 @@ extends Container
 var enemy
 var ending_veil
 var map
+var life_bar
 
 
 func _ready():
@@ -12,13 +13,18 @@ func _ready():
 	reset_map()
 	set_process(true)
 
+	life_bar = preload("res://life_bar.tscn").instance()
+	life_bar.set_pos(Vector2(75, 25))
+	get_node("HUD").add_child(life_bar)
+
 
 
 func reset_map():
+	get_node("HUD/death_note").set_text("")
+
 	for b in globals.brains:
 		remove_child(b)
 	globals.brains = []
-	globals.num_brains = 0
 	for e in globals.enemies:
 		remove_child(e)
 	globals.enemies = []
@@ -30,15 +36,17 @@ func reset_map():
 	globals.zombie.set_pos(Vector2(600, 0))
 	globals.zombie.reset()
 
+	choose_buttons()
+
 	if map:
 		remove_child(map)
-	map = preload("res://level1.tscn").instance()
+	map = preload("res://level2.tscn").instance()
 	globals.tile_map = map.get_node("TileMap")
 	add_child(map)
 	load_map()
 	get_node("StreamPlayer").seek_pos(0)
 	get_node("StreamPlayer").play()
-
+	get_node("StreamPlayer").set_volume(0)
 
 
 
@@ -49,7 +57,7 @@ func load_map():
 		var content = globals.tile_map.get_cell(tile.x, tile.y)
 		if content == 18:
 			globals.tile_map.set_cell (tile.x,tile.y, -1)
-			create_enemy(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE - 64)
+			create_enemy(tile.x * globals.TILE_SIZE - 32, tile.y * globals.TILE_SIZE - 64)
 		elif content == 19:
 			globals.tile_map.set_cell (tile.x,tile.y, -1)
 			create_spike(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE + 32, false)
@@ -61,10 +69,9 @@ func load_map():
 			create_end(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE - 25)
 		elif content == 22:
 			globals.tile_map.set_cell (tile.x,tile.y, -1)
-			create_brain(tile.x * globals.TILE_SIZE, tile.y * globals.TILE_SIZE)
+			create_brain(tile.x * globals.TILE_SIZE + 32, tile.y * globals.TILE_SIZE)
 
 func _process(delta):
-	proces_brain_num()
 	process_end_sign(delta)
 	if win():
 		get_node("StreamPlayer").stop()
@@ -75,7 +82,9 @@ func _process(delta):
 		if check_win_time():
 			reset_map()
 	else:
+		process_zombie_life(delta)
 		if globals.zombie.dead:
+			get_node("HUD/death_note").set_text(globals.zombie.death_cause)
 			get_node("StreamPlayer").stop()
 		if not check_end():
 			process_fade(delta)
@@ -88,8 +97,8 @@ func _process(delta):
 			get_node("StreamPlayer").stop()
 			reset_map()
 
-func proces_brain_num():
-	get_node("HUD/brains/NumBrains").set_text(str(globals.num_brains))
+func process_zombie_life(delta):
+	life_bar.update()
 
 func process_fade(delta):
 	var opacity = ending_veil.get_opacity()
@@ -142,7 +151,7 @@ func create_head():
 
 
 func check_end():
-	if globals.zombie.dead_time > 5:
+	if globals.zombie.dead_time > 3:
 		return true
 
 func check_win_time():
@@ -151,7 +160,10 @@ func check_win_time():
 
 func process_enemies():
 	for enemy in globals.enemies:
-		enemy.process()
+		if not enemy.dead:
+			enemy.process()
+			if enemy.dead:
+				create_brain(enemy.get_pos().x + 65, enemy.get_pos().y + 60)
 
 func process_spikes():
 	for spike in globals.spikes:
@@ -164,24 +176,68 @@ func process_brains():
 func process_end_sign(delta):
 	globals.end_sign.process(delta)
 
-func _on_btn_jump_input_event( event ):
-	if event.type == InputEvent.MOUSE_BUTTON \
-    and event.button_index == BUTTON_LEFT \
-    and event.pressed:
-		globals.zombie.jump()
-
-
-func _on_btn_attack_input_event( event ):
-	if event.type == InputEvent.MOUSE_BUTTON \
-    and event.button_index == BUTTON_LEFT \
-    and event.pressed:
-		if globals.zombie.attack():
-			globals.head.start_attack()
 
 func win():
 	return (globals.end_sign.reached)
 
+func input_enabled():
+	return not (globals.end_sign.reached or globals.zombie.dead)
 
+func choose_buttons():
+	if globals.zombie.current_zombie == '':
+		get_node("HUD/btn_jump").show()
+		get_node("HUD/btn_double_jump").hide()
+		get_node("HUD/btn_attack").show()
+		get_node("HUD/btn_ninja").show()
+		get_node("HUD/btn_zombie").hide()
+	elif globals.zombie.current_zombie == 'ninja':
+		get_node("HUD/btn_jump").hide()
+		get_node("HUD/btn_double_jump").show()
+		get_node("HUD/btn_attack").hide()
+		get_node("HUD/btn_ninja").hide()
+		get_node("HUD/btn_zombie").show()
+
+
+
+func _on_btn_jump_input_event( event ):
+	if input_enabled():
+		if event.type == InputEvent.MOUSE_BUTTON \
+	    and event.button_index == BUTTON_LEFT \
+	    and event.pressed:
+			globals.zombie.jump()
+
+
+func _on_btn_attack_input_event( event ):
+	if input_enabled():
+		if event.type == InputEvent.MOUSE_BUTTON \
+	    and event.button_index == BUTTON_LEFT \
+	    and event.pressed:
+			if globals.zombie.attack():
+				globals.head.start_attack()
+
+func _on_btn_ninja_input_event( event ):
+	if input_enabled():
+		if event.type == InputEvent.MOUSE_BUTTON \
+	    and event.button_index == BUTTON_LEFT \
+	    and event.pressed:
+			if globals.zombie.become('ninja'):
+				choose_buttons()
+
+func _on_btn_zombie_input_event( event ):
+	if input_enabled():
+		if event.type == InputEvent.MOUSE_BUTTON \
+	    and event.button_index == BUTTON_LEFT \
+	    and event.pressed:
+			if globals.zombie.become(''):
+				choose_buttons()
+
+
+func _on_btn_double_jump_input_event( event ):
+	if input_enabled():
+		if event.type == InputEvent.MOUSE_BUTTON \
+	    and event.button_index == BUTTON_LEFT \
+	    and event.pressed:
+			globals.zombie.double_jump()
 
 
 

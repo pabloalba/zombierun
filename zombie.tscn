@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=13 format=1]
 
 [ext_resource path="res://scripts/zombie.gd" type="Script" id=1]
 [ext_resource path="res://assets/img/zombie.png" type="Texture" id=2]
@@ -45,9 +45,37 @@ tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = { "times":FloatArray( 0, 0.2, 0.4 ), "transitions":FloatArray( 1, 1, 1 ), "update":1, "values":[ 8, 9, 10 ] }
 
+[sub_resource type="Animation" id=7]
+
+resource/name = "ninjadead"
+length = 0.7
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7 ), "transitions":FloatArray( 1, 1, 1, 1, 1, 1, 1, 1 ), "update":1, "values":[ 40, 41, 42, 43, 44, 45, 46, 47 ] }
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:flip_h")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = { "times":FloatArray( 0 ), "transitions":FloatArray( 1 ), "update":1, "values":[ true ] }
+
 [sub_resource type="Animation" id=4]
 
-resource/name = "running"
+resource/name = "ninjarunning"
+length = 0.7
+loop = true
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7 ), "transitions":FloatArray( 1, 1, 1, 1, 1, 1, 1, 1 ), "update":1, "values":[ 32, 33, 34, 35, 36, 37, 38, 39 ] }
+
+[sub_resource type="Animation" id=5]
+
 length = 0.5
 loop = true
 step = 0.1
@@ -57,7 +85,7 @@ tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = { "times":FloatArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ), "transitions":FloatArray( 1, 1, 1, 1, 1, 1 ), "update":1, "values":[ 0, 1, 2, 3, 4, 0 ] }
 
-[sub_resource type="SampleLibrary" id=5]
+[sub_resource type="SampleLibrary" id=6]
 
 samples/grunt = { "db":0.0, "pitch":1.0, "sample":ExtResource( 3 ) }
 samples/jump = { "db":0.0, "pitch":1.0, "sample":ExtResource( 4 ) }
@@ -73,9 +101,10 @@ script/script = ExtResource( 1 )
 transform/pos = Vector2( -1.3805, -0.566006 )
 texture = ExtResource( 2 )
 centered = false
-vframes = 4
+flip_h = true
+vframes = 6
 hframes = 8
-frame = 24
+frame = 47
 
 [node name="anim" type="AnimationPlayer" parent="."]
 
@@ -85,7 +114,11 @@ root/root = NodePath("..")
 anims/attacking = SubResource( 1 )
 anims/dead = SubResource( 2 )
 anims/jumping = SubResource( 3 )
-anims/running = SubResource( 4 )
+anims/ninjadead = SubResource( 7 )
+anims/ninjarunning = SubResource( 4 )
+anims/running = SubResource( 5 )
+next/ninjadead = ""
+next/ninjarunning = ""
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
@@ -99,7 +132,7 @@ params/attenuation/min_distance = 1.0
 params/attenuation/max_distance = 2048.0
 params/attenuation/distance_exp = 1.0
 config/polyphony = 1
-config/samples = SubResource( 5 )
+config/samples = SubResource( 6 )
 config/pitch_random = 0.0
 
 

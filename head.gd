@@ -22,16 +22,8 @@ func end_attack():
 	globals.zombie.attacking = false
 
 func process(delta):
+#	enemy_killed = null
 	if is_visible():
-		var bodies=[]
-
-		for body in bodies:
-			if 'enemy' in body.get_name() and not body.dead:
-				body.die()
-				head_return = true
-
-
-
 		var head_pos = get_pos()
 		var zombie_pos = globals.zombie.get_pos()
 

@@ -4,17 +4,23 @@ const RUNNING = 0
 const JUMPING = 1
 const DEADING = 2
 const FALLING = 3
+const DOUBLE_JUMPING = 4
 
 var vel_x = 300
 var vel_y = 300
 
 var current_action = RUNNING
 var jump = false
+var double_jump = false
+var double_jump_ready = false
 var attack = false
 var anim = 'running'
 var attacking = false
 var dead_time = 0
 var dead = false
+var current_zombie = ''
+var life = 100
+var death_cause = "DEAD!"
 
 func _ready():
 	set_z(1)
@@ -31,12 +37,26 @@ func reset():
 	get_node("anim").play("running")
 	vel_x = globals.ZOMBIE_SPEED_X
 	vel_y = globals.ZOMBIE_SPEED_Y
+	current_zombie = ''
+	life = 100
+	death_cause = "DEAD!"
 
 
 func jump():
 	if current_action == RUNNING:
 		jump = true
 		get_node("SamplePlayer2D").play("jump")
+
+func double_jump():
+	if current_action == RUNNING:
+		jump()
+	elif current_action == JUMPING or current_action == FALLING:
+		if double_jump_ready:
+			double_jump_ready = false
+			double_jump = true
+			get_node("SamplePlayer2D").play("jump")
+
+
 
 func attack():
 	if not dead and not attacking:
@@ -51,10 +71,11 @@ func run():
 func fall():
 	current_action = FALLING
 
-func die(bounce=true):
+func die(cause="DEAD!", bounce=true):
 	if !dead:
+		death_cause = cause
 		get_node("SamplePlayer2D").play("ouch")
-	get_node("anim").play("dead")
+	get_node("anim").play(current_zombie+"dead")
 	if bounce:
 		vel_x = - globals.ZOMBIE_SPEED_X
 	else:
@@ -65,6 +86,7 @@ func process(delta):
 	process_movement(delta)
 	process_dead(delta)
 	if not dead:
+		life -= delta * 5
 		process_actions(delta)
 
 
@@ -77,7 +99,11 @@ func process_dead(delta):
 		# Dead by fall
 		var zombie_pos = get_pos()
 		if zombie_pos.y >= globals.HEIGHT + 150:
-			die()
+			die("ABYSS!")
+
+		# Dead by life
+		if life <= 0:
+			die("BRAAAAINS!")
 
 
 
@@ -88,6 +114,11 @@ func process_actions(delta):
 			vel_y = -globals.ZOMBIE_SPEED_Y
 			current_action = JUMPING
 			jump = false
+	elif current_action == JUMPING or current_action == FALLING:
+		if double_jump:
+			vel_y = -globals.ZOMBIE_SPEED_Y
+			current_action = DOUBLE_JUMPING
+			double_jump = false
 
 
 	if not attacking and attack:
@@ -101,7 +132,7 @@ func process_actions(delta):
 	# Change animation
 	if (new_anim != anim):
 		anim = new_anim
-		get_node("anim").play(anim)
+		get_node("anim").play(current_zombie + anim)
 
 
 
@@ -132,7 +163,8 @@ func process_movement(delta):
 	if collide:
 		# undo y move
 		new_pos.y = pos.y
-		if current_action == JUMPING or current_action == FALLING:
+		if current_action == JUMPING or current_action == DOUBLE_JUMPING or current_action == FALLING:
+			double_jump_ready = true
 			run()
 	else:
 		fall()
@@ -156,5 +188,12 @@ func zombie_floor_collides():
 					return true
 	return false
 
+func become(new_zombie_type):
+	if current_action == RUNNING or current_action == JUMPING or current_action == FALLING:
+		current_zombie = new_zombie_type
+		double_jump_ready = true
+		anim = ''
+		return true
+	return false
 
 

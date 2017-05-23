@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://assets/img/bg1.png" type="Texture" id=2]
@@ -6,10 +6,21 @@
 [ext_resource path="res://assets/img/bg2.png" type="Texture" id=4]
 [ext_resource path="res://zombie.tscn" type="PackedScene" id=5]
 [ext_resource path="res://assets/img/btn_jump_100.png" type="Texture" id=6]
-[ext_resource path="res://assets/img/btn_attack_100.png" type="Texture" id=7]
-[ext_resource path="res://assets/img/brain/brain.png" type="Texture" id=8]
-[ext_resource path="res://assets/img/ending.png" type="Texture" id=9]
-[ext_resource path="res://music/Galway.ogg" type="AudioStream" id=10]
+[ext_resource path="res://assets/img/btn_double_jump_100.png" type="Texture" id=7]
+[ext_resource path="res://assets/img/btn_attack_100.png" type="Texture" id=8]
+[ext_resource path="res://assets/img/brain/brain.png" type="Texture" id=9]
+[ext_resource path="res://assets/img/btn_ninja.png" type="Texture" id=10]
+[ext_resource path="res://assets/img/btn_zombie.png" type="Texture" id=11]
+[ext_resource path="res://assets/img/ending.png" type="Texture" id=12]
+[ext_resource path="res://assets/font/zombiecontrol.ttf" type="DynamicFontData" id=13]
+[ext_resource path="res://music/Galway.ogg" type="AudioStream" id=14]
+
+[sub_resource type="DynamicFont" id=1]
+
+font/size = 190
+font/use_mipmaps = false
+font/use_filter = false
+font/font = ExtResource( 13 )
 
 [node name="Container" type="Container"]
 
@@ -111,9 +122,9 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 1139.0
+margin/left = 1140.0
 margin/top = 525.0
-margin/right = 1239.0
+margin/right = 1240.0
 margin/bottom = 627.0
 
 [node name="Sprite" type="Sprite" parent="HUD/btn_jump"]
@@ -121,6 +132,23 @@ margin/bottom = 627.0
 transform/pos = Vector2( 50, 50 )
 z/z = 10
 texture = ExtResource( 6 )
+
+[node name="btn_double_jump" type="Control" parent="HUD"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 1140.0
+margin/top = 525.0
+margin/right = 1240.0
+margin/bottom = 627.0
+
+[node name="Sprite" type="Sprite" parent="HUD/btn_double_jump"]
+
+transform/pos = Vector2( 50, 50 )
+z/z = 10
+texture = ExtResource( 7 )
 
 [node name="btn_attack" type="Control" parent="HUD"]
 
@@ -135,41 +163,84 @@ margin/bottom = 712.0
 
 [node name="Sprite" type="Sprite" parent="HUD/btn_attack"]
 
-texture = ExtResource( 7 )
+texture = ExtResource( 8 )
 centered = false
 
 [node name="brains" type="Sprite" parent="HUD"]
 
 transform/pos = Vector2( 20.1404, 15.1052 )
-texture = ExtResource( 8 )
+texture = ExtResource( 9 )
 centered = false
 flip_h = true
 
-[node name="NumBrains" type="Label" parent="HUD/brains"]
+[node name="btn_ninja" type="Control" parent="HUD"]
 
-rect/scale = Vector2( 2, 2 )
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 50.0
+margin/top = 550.0
+margin/right = 126.0
+margin/bottom = 629.0
+
+[node name="Sprite" type="Sprite" parent="HUD/btn_ninja"]
+
+transform/pos = Vector2( 1, 1 )
+texture = ExtResource( 10 )
+centered = false
+
+[node name="btn_zombie" type="Control" parent="HUD"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 50.0
+margin/top = 550.0
+margin/right = 126.0
+margin/bottom = 629.0
+
+[node name="Sprite" type="Sprite" parent="HUD/btn_zombie"]
+
+transform/pos = Vector2( 1, 1 )
+texture = ExtResource( 11 )
+centered = false
+
+[node name="ending_veil" type="Sprite" parent="HUD"]
+
+visibility/visible = false
+z/z = 10
+texture = ExtResource( 12 )
+centered = false
+
+[node name="death_note" type="Label" parent="HUD"]
+
+anchor/left = 3
+anchor/top = 3
+anchor/right = 3
+anchor/bottom = 3
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 60.0
-margin/top = 10.0
-margin/right = 100.0
-margin/bottom = 24.0
-text = "0"
+margin/left = 635.0
+margin/top = 144.0
+margin/right = -639.0
+margin/bottom = -77.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0.917969, 0.0753021, 0.0753021, 1 )
+align = 1
+valign = 1
+autowrap = true
+uppercase = true
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="ending_veil" type="Sprite" parent="HUD"]
-
-z/z = 10
-texture = ExtResource( 9 )
-centered = false
-
 [node name="StreamPlayer" type="StreamPlayer" parent="."]
 
-stream/stream = ExtResource( 10 )
+stream/stream = ExtResource( 14 )
 stream/play = false
 stream/loop = true
 stream/volume_db = 0.0
@@ -180,6 +251,12 @@ stream/buffering_ms = 500
 
 [connection signal="input_event" from="HUD/btn_jump" to="." method="_on_btn_jump_input_event"]
 
+[connection signal="input_event" from="HUD/btn_double_jump" to="." method="_on_btn_double_jump_input_event"]
+
 [connection signal="input_event" from="HUD/btn_attack" to="." method="_on_btn_attack_input_event"]
+
+[connection signal="input_event" from="HUD/btn_ninja" to="." method="_on_btn_ninja_input_event"]
+
+[connection signal="input_event" from="HUD/btn_zombie" to="." method="_on_btn_zombie_input_event"]
 
 
