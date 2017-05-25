@@ -11,10 +11,15 @@ const TILE_SIZE = 64
 var enemies = []
 var spikes = []
 var brains = []
+var help_signs = []
 var zombie
 var head
 var tile_map
 var end_sign
+var current_level = 1
+var max_level = 1
+var ninja_allowed = false
+var cowboy_allowed = false
 
 
 

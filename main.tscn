@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=1]
+[gd_scene load_steps=19 format=1]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://assets/img/bg1.png" type="Texture" id=2]
@@ -13,11 +13,26 @@
 [ext_resource path="res://assets/img/btn_zombie.png" type="Texture" id=11]
 [ext_resource path="res://assets/img/ending.png" type="Texture" id=12]
 [ext_resource path="res://assets/font/zombiecontrol.ttf" type="DynamicFontData" id=13]
-[ext_resource path="res://music/Galway.ogg" type="AudioStream" id=14]
+[ext_resource path="res://assets/img/signs/big_sign.png" type="Texture" id=14]
+[ext_resource path="res://music/Galway.ogg" type="AudioStream" id=15]
 
 [sub_resource type="DynamicFont" id=1]
 
 font/size = 190
+font/use_mipmaps = false
+font/use_filter = false
+font/font = ExtResource( 13 )
+
+[sub_resource type="DynamicFont" id=2]
+
+font/size = 64
+font/use_mipmaps = false
+font/use_filter = false
+font/font = ExtResource( 13 )
+
+[sub_resource type="DynamicFont" id=3]
+
+font/size = 46
 font/use_mipmaps = false
 font/use_filter = false
 font/font = ExtResource( 13 )
@@ -47,6 +62,23 @@ transform/pos = Vector2( 640.477, 362.024 )
 texture = ExtResource( 2 )
 
 [node name="bg1" type="Sprite" parent="BG"]
+
+transform/pos = Vector2( 640.477, 362.024 )
+texture = ExtResource( 2 )
+
+[node name="BG1" type="CanvasLayer" parent="."]
+
+layer = -1
+offset = Vector2( 0, 0 )
+rotation = 0.0
+scale = Vector2( 1, 1 )
+
+[node name="bg" type="Sprite" parent="BG1"]
+
+transform/pos = Vector2( 640.477, 362.024 )
+texture = ExtResource( 2 )
+
+[node name="bg1" type="Sprite" parent="BG1"]
 
 transform/pos = Vector2( 640.477, 362.024 )
 texture = ExtResource( 2 )
@@ -238,9 +270,46 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
+[node name="paused_control" type="Control" parent="HUD"]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 229.0
+margin/top = 76.0
+margin/right = 1002.0
+margin/bottom = 626.0
+
+[node name="paused" type="Sprite" parent="HUD/paused_control"]
+
+transform/pos = Vector2( -7.457, -10.5441 )
+texture = ExtResource( 14 )
+centered = false
+
+[node name="help_label" type="RichTextLabel" parent="HUD/paused_control"]
+
+anchor/left = 3
+anchor/top = 3
+anchor/right = 3
+anchor/bottom = 3
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 265.5
+margin/top = 180.0
+margin/right = -277.5
+margin/bottom = -288.0
+custom_fonts/bold_font = SubResource( 2 )
+custom_fonts/normal_font = SubResource( 3 )
+bbcode/enabled = true
+bbcode/bbcode = "[center]Welcome back to the land of the living, zombie Joe!\n\nYou need something to stay alive...\n\n[color=#760096][b]BRAAAAAAAINS[/b][/color]\n[/center]"
+visible_characters = -1
+
 [node name="StreamPlayer" type="StreamPlayer" parent="."]
 
-stream/stream = ExtResource( 14 )
+stream/stream = ExtResource( 15 )
 stream/play = false
 stream/loop = true
 stream/volume_db = 0.0
@@ -258,5 +327,9 @@ stream/buffering_ms = 500
 [connection signal="input_event" from="HUD/btn_ninja" to="." method="_on_btn_ninja_input_event"]
 
 [connection signal="input_event" from="HUD/btn_zombie" to="." method="_on_btn_zombie_input_event"]
+
+[connection signal="input_event" from="HUD/paused_control" to="." method="_on_paused_control_input_event"]
+
+[connection signal="input_event" from="HUD/paused_control/help_label" to="." method="_on_help_label_input_event"]
 
 

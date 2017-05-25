@@ -99,7 +99,7 @@ func process_dead(delta):
 		# Dead by fall
 		var zombie_pos = get_pos()
 		if zombie_pos.y >= globals.HEIGHT + 150:
-			die("ABYSS!")
+			die("CHASM!")
 
 		# Dead by life
 		if life <= 0:
